@@ -1,6 +1,7 @@
 package com.kako351.healthconnectsample
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -8,9 +9,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.health.connect.client.permission.HealthDataRequestPermissions
@@ -31,26 +34,27 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             HealthConnectSampleTheme {
-                val scaffoldState = rememberScaffoldState()
                 // A surface container using the 'background' color from the theme
                 LaunchedEffect("permission") {
                     viewModel.checkPermissionsAndRun(requestPermissions)
                     viewModel.readBodyTemperatures()
                 }
-                main(event = viewModel.event.value, list = viewModel.list.value, scaffoldState, { viewModel.onClickSaveBodyTemperature(it) })
+                main(event = viewModel.event.value, list = viewModel.list.value, { viewModel.onClickSaveBodyTemperature(it) })
             }
         }
     }
 }
 
 @Composable
-fun main(event: MainViewModel.Event?, list: List<BodyTemperature>, scaffoldState: ScaffoldState, onClickSaveBodyTemperature: (value: Double) -> Unit) {
+fun main(event: MainViewModel.Event?, list: List<BodyTemperature>, onClickSaveBodyTemperature: (value: Double) -> Unit) {
+    val scaffoldState = rememberScaffoldState()
+
     Scaffold(
         scaffoldState = scaffoldState
     ) {
-        LaunchedEffect(scaffoldState.snackbarHostState) {
-            if(event != null) {
-                val message = when(event) {
+        if(event != null) {
+            LaunchedEffect(scaffoldState.snackbarHostState) {
+                val message = when (event) {
                     is MainViewModel.Event.InsertSuccess -> "成功"
                     is MainViewModel.Event.InsertFailed -> event.errorMessage
                 }
