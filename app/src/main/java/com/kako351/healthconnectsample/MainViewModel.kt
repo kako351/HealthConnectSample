@@ -6,6 +6,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.health.connect.client.permission.Permission
+import androidx.health.connect.client.records.BodyTemperature
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kako351.healthconnectsample.data.HealthConnectRepository
@@ -24,6 +25,9 @@ class MainViewModel @Inject constructor(
 
     private val _event = mutableStateOf<Event?>(null)
     val event: State<Event?> get() = _event
+
+    private val _list = mutableStateOf<List<BodyTemperature>>(emptyList())
+    val list: State<List<BodyTemperature>> get() = _list
 
     fun resultHealthConnectRequestPermissions() {
         Log.i("MainViewModel", "registerForActivityResult callback")
@@ -52,6 +56,21 @@ class MainViewModel @Inject constructor(
                 onFailed = {
                     Log.e("MainViewModel", "insertBodyTemperature Failed message=${it.message}")
                     _event.value = Event.InsertFailed("体温の書き込みに失敗しました。パーミッションが許可されているか確認してください")
+                }
+            )
+        }
+    }
+
+    fun readBodyTemperatures() {
+        viewModelScope.launch {
+            healthConnectRepository.getBodyTemperature(
+                onSuccess = {
+                    Log.d("MainViewModel", "readBodyTemperatures Success")
+                    _list.value = it?.records ?: emptyList()
+                },
+                onFailed = {
+                    Log.e("MainViewModel", "readBodyTemperatures Failed message=${it.message}")
+                    _event.value = Event.InsertFailed("体温データの取得に失敗しました。パーミッションが許可されているか確認してください")
                 }
             )
         }

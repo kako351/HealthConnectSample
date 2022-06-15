@@ -12,9 +12,13 @@ import androidx.health.connect.client.permission.Permission
 import androidx.health.connect.client.records.BloodPressure
 import androidx.health.connect.client.records.BodyTemperature
 import androidx.health.connect.client.records.BodyTemperatureMeasurementLocation
+import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.response.InsertRecordsResponse
+import androidx.health.connect.client.response.ReadRecordsResponse
+import androidx.health.connect.client.time.TimeRangeFilter
 import com.kako351.healthconnectsample.BuildConfig
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
 import javax.inject.Inject
@@ -74,6 +78,22 @@ class HealthConnectRepositoryImpl @Inject constructor(
 
         runCatching {
             healthConnectClient?.insertRecords(record)
+        }.onSuccess {
+            onSuccess(it)
+        }.onFailure {
+            onFailed(it)
+        }
+    }
+
+    override suspend fun getBodyTemperature(onSuccess: (response: ReadRecordsResponse<BodyTemperature>?) -> Unit, onFailed: (e: Throwable) -> Unit) {
+        val request = ReadRecordsRequest(
+            recordType = BodyTemperature::class,
+            timeRangeFilter = TimeRangeFilter.Companion.after(Instant.now(Clock.systemDefaultZone()).minusSeconds(60 * 60 * 24)),
+            pageSize = 30
+        )
+
+        runCatching {
+            healthConnectClient?.readRecords(request)
         }.onSuccess {
             onSuccess(it)
         }.onFailure {

@@ -5,6 +5,7 @@ import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.permission.Permission
 import androidx.health.connect.client.records.BodyTemperature
 import androidx.health.connect.client.response.InsertRecordsResponse
+import androidx.health.connect.client.response.ReadRecordsResponse
 
 interface HealthConnectRepository {
     fun getOrCreateHealthConnectClient(): HealthConnectClient
@@ -18,6 +19,11 @@ interface HealthConnectRepository {
     suspend fun insertBodyTemperature(
         bodyTemperature: Double,
         onSuccess: (response: InsertRecordsResponse?) -> Unit,
+        onFailed: (e: Throwable) -> Unit
+    )
+
+    suspend fun getBodyTemperature(
+        onSuccess: (response: ReadRecordsResponse<BodyTemperature>?) -> Unit,
         onFailed: (e: Throwable) -> Unit
     )
 }
