@@ -52,6 +52,7 @@ class MainViewModel @Inject constructor(
                 onSuccess = {
                     Log.d("MainViewModel", "insertBodyTemperature Success")
                     _event.value = Event.InsertSuccess
+                    readBodyTemperatures()
                 },
                 onFailed = {
                     Log.e("MainViewModel", "insertBodyTemperature Failed message=${it.message}")

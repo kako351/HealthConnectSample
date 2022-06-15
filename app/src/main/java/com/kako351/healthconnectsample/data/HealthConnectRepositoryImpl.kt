@@ -89,7 +89,8 @@ class HealthConnectRepositoryImpl @Inject constructor(
         val request = ReadRecordsRequest(
             recordType = BodyTemperature::class,
             timeRangeFilter = TimeRangeFilter.Companion.after(Instant.now(Clock.systemDefaultZone()).minusSeconds(60 * 60 * 24)),
-            pageSize = 30
+            pageSize = 30,
+            ascendingOrder = false
         )
 
         runCatching {

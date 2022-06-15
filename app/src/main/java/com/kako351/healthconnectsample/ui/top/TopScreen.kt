@@ -86,7 +86,9 @@ fun TopScreen(
         )
 
         LazyColumn {
-            items(list) {
+            items(list, key = {
+                "${it.time.nano}"
+            }) {
                 Text(
                     text = it.temperatureDegreesCelsius.toString(),
                     modifier = Modifier
