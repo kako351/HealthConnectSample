@@ -1,10 +1,12 @@
 package com.kako351.healthconnectsample
 
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.content.ContextCompat.startActivity
 import androidx.health.connect.client.permission.Permission
 import androidx.health.connect.client.records.BodyTemperature
 import androidx.lifecycle.ViewModel
@@ -13,6 +15,7 @@ import com.kako351.healthconnectsample.data.HealthConnectRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -74,6 +77,14 @@ class MainViewModel @Inject constructor(
                     _event.value = Event.InsertFailed("体温データの取得に失敗しました。パーミッションが許可されているか確認してください")
                 }
             )
+        }
+    }
+
+    fun onClickHealtchConnect(activity: MainActivity) {
+        val packageName = "com.google.android.apps.healthdata"
+        val packageManager = activity.packageManager
+        packageManager.getLaunchIntentForPackage(packageName)?.let {
+            activity.startActivity(it)
         }
     }
 }

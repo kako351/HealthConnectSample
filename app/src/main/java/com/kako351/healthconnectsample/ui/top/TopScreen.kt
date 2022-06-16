@@ -8,10 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,13 +20,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.health.connect.client.records.BodyTemperature
+import com.kako351.healthconnectsample.ui.theme.HealthConnectSampleTheme
 
 @Composable
 fun TopScreen(
     onClick: (value: Double) -> Unit,
+    onClickHealthConncet: () -> Unit,
     list: List<BodyTemperature>
 ) {
     val bodyTemperature = remember {
@@ -76,14 +76,26 @@ fun TopScreen(
             )
         }
 
-        Text(
-            text = "直近のデータ",
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, top = 32.dp),
-            textAlign = TextAlign.Left,
-            fontSize = 20.sp
-        )
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, top = 32.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Text(
+                text = "直近のデータ",
+                textAlign = TextAlign.Left,
+                fontSize = 20.sp
+            )
+
+            TextButton(onClick = onClickHealthConncet) {
+                Text(
+                    text = "HealthConnectでデータを見る",
+                    fontSize = 16.sp
+                )
+            }
+
+        }
 
         LazyColumn {
             items(list, key = {
@@ -100,5 +112,13 @@ fun TopScreen(
                 Divider()
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewTopScreen() {
+    HealthConnectSampleTheme {
+        TopScreen(onClick = {}, onClickHealthConncet = {}, list = emptyList())
     }
 }

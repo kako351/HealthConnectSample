@@ -39,14 +39,14 @@ class MainActivity : ComponentActivity() {
                     viewModel.checkPermissionsAndRun(requestPermissions)
                     viewModel.readBodyTemperatures()
                 }
-                main(event = viewModel.event.value, list = viewModel.list.value, { viewModel.onClickSaveBodyTemperature(it) })
+                main(event = viewModel.event.value, list = viewModel.list.value, onClickSaveBodyTemperature = { viewModel.onClickSaveBodyTemperature(it) }, onClickHealthConnect = { viewModel.onClickHealtchConnect(this) })
             }
         }
     }
 }
 
 @Composable
-fun main(event: MainViewModel.Event?, list: List<BodyTemperature>, onClickSaveBodyTemperature: (value: Double) -> Unit) {
+fun main(event: MainViewModel.Event?, list: List<BodyTemperature>, onClickSaveBodyTemperature: (value: Double) -> Unit, onClickHealthConnect: () -> Unit) {
     val scaffoldState = rememberScaffoldState()
 
     Scaffold(
@@ -65,6 +65,7 @@ fun main(event: MainViewModel.Event?, list: List<BodyTemperature>, onClickSaveBo
             onClick = {
                 onClickSaveBodyTemperature(it)
             },
+            onClickHealthConncet = onClickHealthConnect,
             list = list
         )
     }
